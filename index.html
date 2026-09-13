@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="Gami Infinity — AI-powered games and challenges."
+    >
+
+    <title>Gami Infinity</title>
+
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+    <!-- Background -->
+    <div class="background-grid"></div>
+
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+    <div class="background-glow glow-three"></div>
+
+
+    <!-- =========================
+         TOP NAVIGATION
+    ========================== -->
+
+    <header class="topbar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                ∞
+            </div>
+
+            <div class="brand-text">
+                <h1>Gami Infinity</h1>
+                <span>AI Games</span>
+            </div>
+
+        </div>
+
+
+        <div class="topbar-right">
+
+            <div class="online-status">
+
+                <span class="status-dot"></span>
+
+                <span id="activeUsers">
+                    0
+                </span>
+
+                <span>
+                    players online
+                </span>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main>
+
+
+        <!-- HERO -->
+
+        <section class="hero">
+
+            <div class="hero-content">
+
+                <div class="hero-badge">
+                    <span>⚡</span>
+                    AI-POWERED GAMES
+                </div>
+
+
+                <h2>
+                    Enter the game.
+                    <br>
+
+                    <span>
+                        Challenge the AI.
+                    </span>
+                </h2>
+
+
+                <p>
+                    Gami Infinity is a collection of AI-powered games
+                    where your decisions, creativity and strategy matter.
+                </p>
+
+
+                <div class="hero-actions">
+
+                    <button
+                        class="primary-btn"
+                        onclick="openGame(1)"
+                    >
+                        <span>Start Playing</span>
+                        <span class="button-arrow">→</span>
+                    </button>
+
+
+                    <button
+                        class="secondary-btn"
+                        onclick="scrollToGames()"
+                    >
+                        Explore Games
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- Decorative AI panel -->
+
+            <div class="hero-panel">
+
+                <div class="panel-header">
+
+                    <div class="panel-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <span>
+                        GAMI_AI
+                    </span>
+
+                </div>
+
+
+                <div class="panel-body">
+
+                    <div class="ai-symbol">
+                        ∞
+                    </div>
+
+                    <div class="panel-line long"></div>
+                    <div class="panel-line medium"></div>
+                    <div class="panel-line short"></div>
+
+                    <div class="panel-status">
+                        <span class="status-dot"></span>
+                        SYSTEM READY
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             GAMES
+        ========================== -->
+
+        <section
+            class="games-section"
+            id="games"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="section-label">
+                        THE COLLECTION
+                    </span>
+
+                    <h3>
+                        Choose your challenge
+                    </h3>
+
+                </div>
+
+                <span class="section-count">
+                    04 SLOTS
+                </span>
+
+            </div>
+
+
+
+            <div class="game-grid">
+
+
+                <!-- GAME 1 -->
+
+                <article class="game-card featured">
+
+                    <div class="game-number">
+                        01
+                    </div>
+
+
+                    <div class="game-icon">
+                        ⚔️
+                    </div>
+
+
+                    <div class="game-content">
+
+                        <div class="game-tag">
+                            FEATURED
+                        </div>
+
+                        <h4>
+                            The Gauntlet
+                        </h4>
+
+                        <p>
+                            Ten increasingly difficult challenges.
+                            Outsmart the AI and survive the gauntlet.
+                        </p>
+
+
+                        <div class="game-meta">
+
+                            <span>
+                                10 Levels
+                            </span>
+
+                            <span>
+                                AI Challenge
+                            </span>
+
+                        </div>
+
+
+                        <button
+                            class="play-btn"
+                            onclick="openGame(1)"
+                        >
+                            Play Game
+                            <span>→</span>
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- GAME 2 -->
+
+                <article class="game-card">
+
+                    <div class="game-number">
+                        02
+                    </div>
+
+
+                    <div class="game-icon">
+                        🔥
+                    </div>
+
+
+                    <div class="game-content">
+
+                        <h4>
+                            Roast Master
+                        </h4>
+
+                        <p>
+                            Enter the arena and see whether
+                            you can outsmart the AI in a roast battle.
+                        </p>
+
+
+                        <div class="game-meta">
+
+                            <span>
+                                AI Battle
+                            </span>
+
+                            <span>
+                                3 Rounds
+                            </span>
+
+                        </div>
+
+
+                        <button
+                            class="play-btn"
+                            onclick="openGame(2)"
+                        >
+                            Play Game
+                            <span>→</span>
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- GAME 3 -->
+
+                <article class="game-card">
+
+                    <div class="game-number">
+                        03
+                    </div>
+
+
+                    <div class="game-icon">
+                        🔐
+                    </div>
+
+
+                    <div class="game-content">
+
+                        <h4>
+                            Password Heist
+                        </h4>
+
+                        <p>
+                            Enter a fictional AI vault and solve
+                            the challenge before your attempts run out.
+                        </p>
+
+
+                        <div class="game-meta">
+
+                            <span>
+                                AI Vault
+                            </span>
+
+                            <span>
+                                Limited Attempts
+                            </span>
+
+                        </div>
+
+
+                        <button
+                            class="play-btn"
+                            onclick="openGame(3)"
+                        >
+                            Play Game
+                            <span>→</span>
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- GAME 4 -->
+
+                <article class="game-card locked">
+
+                    <div class="game-number">
+                        04
+                    </div>
+
+
+                    <div class="game-icon">
+                        ?
+                    </div>
+
+
+                    <div class="game-content">
+
+                        <div class="game-tag coming">
+                            COMING SOON
+                        </div>
+
+                        <h4>
+                            Unknown
+                        </h4>
+
+                        <p>
+                            A new challenge is being prepared
+                            for the Gami Infinity collection.
+                        </p>
+
+
+                        <div class="game-meta">
+
+                            <span>
+                                Locked
+                            </span>
+
+                        </div>
+
+
+                        <button
+                            class="play-btn disabled"
+                            disabled
+                        >
+                            Coming Soon
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             STATS
+        ========================== -->
+
+        <section class="stats-section">
+
+
+            <div class="stat">
+
+                <strong>
+                    4
+                </strong>
+
+                <span>
+                    Games Planned
+                </span>
+
+            </div>
+
+
+            <div class="stat">
+
+                <strong>
+                    10
+                </strong>
+
+                <span>
+                    Gauntlet Levels
+                </span>
+
+            </div>
+
+
+            <div class="stat">
+
+                <strong>
+                    ∞
+                </strong>
+
+                <span>
+                    Possibilities
+                </span>
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <div class="footer-brand">
+
+            <strong>
+                Gami Infinity
+            </strong>
+
+            <span>
+                AI-powered games.
+            </span>
+
+        </div>
+
+
+        <div class="footer-right">
+
+            <span>
+                Built for players who think differently.
+            </span>
+
+            <span class="footer-version">
+                v1.0
+            </span>
+
+        </div>
+
+    </footer>
+
+
+
+    <!-- JavaScript -->
+
+    <script src="/script.js"></script>
+
+</body>
+</html>
