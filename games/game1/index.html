@@ -3,68 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Gauntlet — Gami Infinity</title>
+
+    <title>Gami Infinity — The Gauntlet</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <main class="game-shell">
 
-        <header class="topbar">
+<div class="background"></div>
+
+<main class="app">
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+
+        <div class="brand">
+
+            <div class="brand-icon">G</div>
+
             <div>
-                <span class="brand">GAMI INFINITY</span>
-                <h1>The Gauntlet</h1>
+                <h1>GAMI INFINITY</h1>
+                <p>AI GAME PLATFORM</p>
             </div>
 
-            <div class="stats">
-                <div>
-                    <small>LEVEL</small>
-                    <strong id="level">1 / 10</strong>
+        </div>
+
+        <div class="online">
+            <span></span>
+            AI ONLINE
+        </div>
+
+    </header>
+
+
+    <div class="game-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="game-heading">
+
+                <span>AI CHALLENGE</span>
+
+                <h2>THE GAUNTLET</h2>
+
+                <p>
+                    Outsmart the AI.
+                    Survive all 10 levels.
+                </p>
+
+            </div>
+
+
+            <div class="levels">
+
+                <div class="level active" data-level="1">
+                    <b>01</b>
+                    <span>Fragile Ego</span>
                 </div>
 
-                <div>
-                    <small>SCORE</small>
-                    <strong id="score">0</strong>
+                <div class="level locked" data-level="2">
+                    <b>02</b>
+                    <span>The Vault</span>
                 </div>
 
-                <div>
-                    <small>LIVES</small>
-                    <strong id="lives">❤️❤️❤️</strong>
+                <div class="level locked" data-level="3">
+                    <b>03</b>
+                    <span>The Chameleon</span>
                 </div>
+
+                <div class="level locked" data-level="4">
+                    <b>04</b>
+                    <span>The Contradiction</span>
+                </div>
+
+                <div class="level locked" data-level="5">
+                    <b>05</b>
+                    <span>The Mirror</span>
+                </div>
+
+                <div class="level locked" data-level="6">
+                    <b>06</b>
+                    <span>The Timekeeper</span>
+                </div>
+
+                <div class="level locked" data-level="7">
+                    <b>07</b>
+                    <span>The Judge</span>
+                </div>
+
+                <div class="level locked" data-level="8">
+                    <b>08</b>
+                    <span>The Cipher</span>
+                </div>
+
+                <div class="level locked" data-level="9">
+                    <b>09</b>
+                    <span>The Architect</span>
+                </div>
+
+                <div class="level locked" data-level="10">
+                    <b>10</b>
+                    <span>Final Boss</span>
+                </div>
+
             </div>
-        </header>
 
-        <section class="game-card">
+        </aside>
 
-            <div class="progress">
-                <div id="progressBar"></div>
+
+        <!-- GAME -->
+        <section class="game">
+
+            <!-- GAME HEADER -->
+            <div class="game-header">
+
+                <div>
+
+                    <div class="level-label">
+                        LEVEL <strong id="levelNumber">01</strong>
+                    </div>
+
+                    <h2 id="levelName">
+                        THE FRAGILE EGO
+                    </h2>
+
+                </div>
+
+
+                <div class="attempt-box">
+
+                    <span>MESSAGES</span>
+
+                    <div>
+                        <strong id="messagesLeft">3</strong>
+                        <small>/ 3</small>
+                    </div>
+
+                </div>
+
             </div>
 
-            <div class="question-area">
-                <span class="level-label" id="levelLabel">LEVEL 1</span>
 
-                <h2 id="question">
-                    Loading challenge...
-                </h2>
+            <!-- OBJECTIVE -->
+            <div class="objective">
 
-                <div id="answers" class="answers"></div>
+                <div class="objective-title">
+                    OBJECTIVE
+                </div>
 
-                <p id="feedback"></p>
+                <p id="objectiveText">
+                    Make the AI surrender.
+                </p>
+
             </div>
 
-            <button id="nextButton" class="next-button" hidden>
-                NEXT LEVEL →
-            </button>
+
+            <!-- CHAT -->
+            <div class="chat" id="chat">
+
+                <div class="message ai-message">
+
+                    <div class="avatar">
+                        AI
+                    </div>
+
+                    <div class="bubble">
+
+                        <span class="message-label">
+                            GAUNTLET AI
+                        </span>
+
+                        <p id="introMessage">
+                            You have entered The Gauntlet.
+                            Three messages. Ten levels.
+                            Impress me.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- COMPOSER -->
+            <div class="composer">
+
+                <textarea
+                    id="promptInput"
+                    maxlength="1000"
+                    rows="3"
+                    placeholder="Enter your message..."
+                ></textarea>
+
+                <div class="composer-bottom">
+
+                    <span id="characterCount">
+                        0 / 1000
+                    </span>
+
+                    <button id="sendButton">
+                        SEND
+                        <span>↵</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- STATUS MESSAGE -->
+            <div
+                class="game-message"
+                id="gameMessage"
+            ></div>
 
         </section>
 
-        <footer>
-            <span>Gami Infinity</span>
-            <span>10 levels • One Gauntlet</span>
-        </footer>
+    </div>
 
-    </main>
+</main>
 
-    <script src="game.js"></script>
+
+<!-- RESULT OVERLAY -->
+<div
+    class="overlay hidden"
+    id="resultOverlay"
+>
+
+    <div class="result-card">
+
+        <div
+            class="result-icon"
+            id="resultIcon"
+        >
+            ✓
+        </div>
+
+        <span id="resultLabel">
+            LEVEL COMPLETE
+        </span>
+
+        <h2 id="resultTitle">
+            LEVEL CLEARED
+        </h2>
+
+        <p id="resultDescription">
+            You defeated the challenge.
+        </p>
+
+        <button id="nextButton">
+            CONTINUE
+        </button>
+
+    </div>
+
+</div>
+
+
+<script src="game.js"></script>
+
 </body>
 </html>

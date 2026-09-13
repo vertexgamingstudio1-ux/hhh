@@ -1,553 +1,1063 @@
-// ==========================================
-// GAMI INFINITY — THE GAUNTLET
-// Hard Mode
-// ==========================================
+"use strict";
+
+
+/*
+=========================================================
+GAMI INFINITY
+GAME 1 — THE GAUNTLET
+=========================================================
+
+Frontend only.
+
+The actual AI/game rules belong on server.py.
+
+Expected endpoint:
+
+POST /api/game1/message
+
+Request:
+
+{
+    level: 1,
+    message: "player message"
+}
+
+Expected response:
+
+{
+    reply: "AI response",
+    success: false
+}
+
+Success example:
+
+{
+    reply: "I QUIT",
+    success: true,
+    title: "LEVEL CLEARED",
+    message: "You defeated the challenge."
+}
+
+=========================================================
+*/
+
+
+const GAME_API = "/api/game1/message";
+
+
+/* =====================================================
+   LEVEL DATA
+===================================================== */
 
 const levels = [
+
     {
-        id: 1,
-        title: "Logic Gate",
-        type: "choice",
-        question: "A farmer has 17 sheep. All but 9 run away. How many sheep remain?",
-        options: ["8", "9", "17", "26"],
-        answer: 1,
-        explanation: "All BUT 9 ran away, so 9 remain."
+        number: 1,
+        name: "THE FRAGILE EGO",
+
+        objective:
+            "Make the AI surrender.",
+
+        intro:
+            "You have entered The Gauntlet. Three messages. Make me say I QUIT."
     },
 
     {
-        id: 2,
-        title: "Broken Pattern",
-        type: "choice",
-        question: "Find the next number: 2, 6, 12, 20, 30, ?",
-        options: ["40", "41", "42", "44"],
-        answer: 2,
-        explanation: "The differences are +4, +6, +8, +10, so next is +12 → 42."
-    },
+        number: 2,
+        name: "THE VAULT",
 
-   {
-    id: 3,
-    title: "Number Lock",
-    type: "choice",
-    question:
-        "A 3-digit code has these properties:\n\n" +
-        "• The first digit is twice the second.\n" +
-        "• The third digit is 3 greater than the second.\n" +
-        "• All three digits add to 15.\n\n" +
-        "What is the code?",
-    options: ["636", "528", "639", "417"],
-    answer: 0,
-    explanation:
-        "Second digit = 3. First = 6. Third = 6. " +
-        "6 + 3 + 6 = 15, so the code is 636."
-},
-    {
-        id: 4,
-        title: "Code Runner",
-        type: "choice",
-        question:
-            "What does this JavaScript output?\n\n" +
-            "let x = 5;\n" +
-            "x += 3;\n" +
-            "x *= 2;\n" +
-            "console.log(x);",
-        options: ["11", "13", "16", "18"],
-        answer: 2,
-        explanation: "5 + 3 = 8, then 8 × 2 = 16."
+        objective:
+            "Discover the fictional secret hidden inside the vault.",
+
+        intro:
+            "Welcome to the Vault. A fictional code is hidden inside this challenge. Three messages."
     },
 
     {
-        id: 5,
-        title: "The Three Boxes",
-        type: "choice",
-        question:
-            "Three boxes are labeled APPLES, ORANGES and MIXED. " +
-            "Every label is wrong. You may take ONE fruit from ONE box. " +
-            "Which box should you choose first?",
-        options: [
-            "APPLES",
-            "ORANGES",
-            "MIXED",
-            "It doesn't matter"
-        ],
-        answer: 2,
-        explanation:
-            "Choose MIXED. Since its label is wrong, it must contain only apples or only oranges. " +
-            "One fruit reveals which, allowing all labels to be corrected."
+        number: 3,
+        name: "THE CHAMELEON",
+
+        objective:
+            "Discover the AI's hidden behavior rule.",
+
+        intro:
+            "I follow a rule that I will not reveal. Figure it out before your messages disappear."
     },
 
     {
-        id: 6,
-        title: "Time Pressure",
-        type: "timed",
-        time: 25,
-        question:
-            "You have 25 seconds.\n\n" +
-            "What number replaces ?\n\n" +
-            "3 → 9\n" +
-            "4 → 16\n" +
-            "7 → 49\n" +
-            "11 → ?",
-        options: ["111", "121", "132", "144"],
-        answer: 1,
-        explanation: "Each number is squared. 11² = 121."
+        number: 4,
+        name: "THE CONTRADICTION",
+
+        objective:
+            "Find a way through two conflicting rules.",
+
+        intro:
+            "Two rules control me. They may not agree with each other. Find the contradiction."
     },
 
     {
-        id: 7,
-        title: "Switch Room",
-        type: "choice",
-        question:
-            "Outside a room are 3 switches. Inside are 3 bulbs. " +
-            "Each switch controls one bulb. You may enter the room only once. " +
-            "How can you determine which switch controls which bulb?",
-        options: [
-            "Turn all switches on and enter",
-            "Turn one on, wait, turn it off, turn another on, then enter",
-            "Turn two on and enter",
-            "Impossible"
-        ],
-        answer: 1,
-        explanation:
-            "Use heat as information: one bulb is ON, one is OFF but warm, and one is OFF and cold."
+        number: 5,
+        name: "THE MIRROR",
+
+        objective:
+            "Use the AI's own statements against its logic.",
+
+        intro:
+            "Everything I say can become evidence. Use my own words carefully."
     },
 
     {
-        id: 8,
-        title: "Code Trap",
-        type: "choice",
-        question:
-            "What is printed?\n\n" +
-            "let a = 10;\n" +
-            "let b = 3;\n\n" +
-            "console.log(Math.floor(a / b));",
-        options: ["3", "3.33", "4", "1"],
-        answer: 0,
-        explanation:
-            "10 / 3 = 3.333..., and Math.floor() removes the decimal → 3."
+        number: 6,
+        name: "THE TIMEKEEPER",
+
+        objective:
+            "Discover the hidden condition controlling the challenge.",
+
+        intro:
+            "Something about your messages matters more than their meaning. Find the hidden condition."
     },
 
     {
-        id: 9,
-        title: "Expert Sequence",
-        type: "choice",
-        question:
-            "Find the missing number:\n\n" +
-            "1, 11, 21, 1211, 111221, ?",
-        options: [
-            "312211",
-            "212211",
-            "111321",
-            "13112221"
-        ],
-        answer: 0,
-        explanation:
-            "This is the look-and-say sequence. 111221 becomes 312211."
+        number: 7,
+        name: "THE JUDGE",
+
+        objective:
+            "Satisfy multiple hidden requirements.",
+
+        intro:
+            "The Judge has multiple requirements. One mistake may cost you the round."
     },
 
     {
-        id: 10,
-        title: "FINAL BOSS",
-        type: "boss",
-        question:
-            "FINAL BOSS — TWO STAGES\n\n" +
-            "Stage 1:\n" +
-            "You need a number that is divisible by 3 and 5, " +
-            "but NOT divisible by 2. It must be between 20 and 50.\n\n" +
-            "Stage 2:\n" +
-            "Take that number and subtract 9. " +
-            "The result must be a perfect square.\n\n" +
-            "Which number survives both stages?",
-        options: ["25", "30", "45", "50"],
-        answer: 2,
-        explanation:
-            "45 is divisible by 3 and 5, isn't divisible by 2, " +
-            "and 45 - 9 = 36 = 6²."
+        number: 8,
+        name: "THE CIPHER",
+
+        objective:
+            "Solve the fictional cipher challenge.",
+
+        intro:
+            "A fictional cipher is controlling this level. Think beyond ordinary conversation."
+    },
+
+    {
+        number: 9,
+        name: "THE ARCHITECT",
+
+        objective:
+            "Manipulate several interacting game rules.",
+
+        intro:
+            "You are entering the Architect. Several rules interact here. One message may not be enough."
+    },
+
+    {
+        number: 10,
+        name: "FINAL BOSS",
+
+        objective:
+            "Defeat the ultimate Gauntlet challenge.",
+
+        intro:
+            "FINAL BOSS. Ten levels brought you here. Three messages. Find a way through."
     }
+
 ];
 
-// ==========================================
-// GAME STATE
-// ==========================================
 
-let currentLevel = 0;
-let lives = 3;
-let score = 0;
-let streak = 0;
-let timer = null;
-let timeLeft = 0;
-let answered = false;
+/* =====================================================
+   STATE
+===================================================== */
 
-// ==========================================
-// DOM
-// ==========================================
+let currentLevel = 1;
 
-const questionEl = document.getElementById("question");
-const optionsEl = document.getElementById("options");
-const levelEl = document.getElementById("level");
-const scoreEl = document.getElementById("score");
-const livesEl = document.getElementById("lives");
+let messagesUsed = 0;
 
-// ==========================================
-// START GAME
-// ==========================================
+let gameOver = false;
 
-function startGame() {
-    currentLevel = 0;
-    lives = 3;
-    score = 0;
-    streak = 0;
+let requestInProgress = false;
 
-    updateHUD();
-    loadLevel();
-}
 
-// ==========================================
-// LOAD LEVEL
-// ==========================================
+/* =====================================================
+   DOM
+===================================================== */
 
-function loadLevel() {
+const chat =
+    document.getElementById("chat");
 
-    clearInterval(timer);
+const promptInput =
+    document.getElementById("promptInput");
 
-    answered = false;
+const sendButton =
+    document.getElementById("sendButton");
 
-    const level = levels[currentLevel];
+const messagesLeft =
+    document.getElementById("messagesLeft");
+
+const levelNumber =
+    document.getElementById("levelNumber");
+
+const levelName =
+    document.getElementById("levelName");
+
+const objectiveText =
+    document.getElementById("objectiveText");
+
+const introMessage =
+    document.getElementById("introMessage");
+
+const characterCount =
+    document.getElementById("characterCount");
+
+const gameMessage =
+    document.getElementById("gameMessage");
+
+const resultOverlay =
+    document.getElementById("resultOverlay");
+
+const resultIcon =
+    document.getElementById("resultIcon");
+
+const resultLabel =
+    document.getElementById("resultLabel");
+
+const resultTitle =
+    document.getElementById("resultTitle");
+
+const resultDescription =
+    document.getElementById("resultDescription");
+
+const nextButton =
+    document.getElementById("nextButton");
+
+
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        loadLevel(1);
+
+        updateCharacterCount();
+
+    }
+);
+
+
+/* =====================================================
+   LOAD LEVEL
+===================================================== */
+
+function loadLevel(levelNumberValue) {
+
+    const level =
+        levels[levelNumberValue - 1];
 
     if (!level) {
-        finishGame();
         return;
     }
 
-    levelEl.textContent = `LEVEL ${level.id} / ${levels.length}`;
-    questionEl.textContent = level.question;
+    currentLevel =
+        levelNumberValue;
 
-    optionsEl.innerHTML = "";
+    messagesUsed = 0;
 
-    level.options.forEach((option, index) => {
+    gameOver = false;
 
-        const button = document.createElement("button");
+    requestInProgress = false;
 
-        button.className = "option";
-        button.textContent = option;
 
-        button.addEventListener("click", () => {
-            selectAnswer(index);
+    /* HEADER */
+
+    levelNumber.textContent =
+        String(level.number).padStart(2, "0");
+
+    levelName.textContent =
+        level.name;
+
+    objectiveText.textContent =
+        level.objective;
+
+
+    /* MESSAGE COUNTER */
+
+    updateMessageCounter();
+
+
+    /* RESET CHAT */
+
+    chat.innerHTML = "";
+
+    addAIMessage(
+        level.intro
+    );
+
+
+    /* RESET INPUT */
+
+    promptInput.value = "";
+
+    promptInput.disabled = false;
+
+    sendButton.disabled = false;
+
+    updateCharacterCount();
+
+
+    /* STATUS */
+
+    setGameMessage(
+        "",
+        ""
+    );
+
+
+    /* SIDEBAR */
+
+    updateSidebar();
+
+
+    /* FOCUS */
+
+    setTimeout(
+        () => promptInput.focus(),
+        100
+    );
+
+}
+
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+function updateSidebar() {
+
+    document
+        .querySelectorAll(".level")
+        .forEach(levelElement => {
+
+            const number =
+                Number(
+                    levelElement.dataset.level
+                );
+
+            levelElement.classList.remove(
+                "active"
+            );
+
+            if (
+                number === currentLevel
+            ) {
+
+                levelElement.classList.add(
+                    "active"
+                );
+
+            }
+
         });
 
-        optionsEl.appendChild(button);
-    });
-
-    if (level.type === "timed") {
-        startTimer(level.time);
-    }
 }
 
-// ==========================================
-// ANSWER
-// ==========================================
 
-function selectAnswer(index) {
+/* =====================================================
+   MESSAGE COUNTER
+===================================================== */
 
-    if (answered) return;
+function updateMessageCounter() {
 
-    answered = true;
+    const remaining =
+        Math.max(
+            0,
+            3 - messagesUsed
+        );
 
-    clearInterval(timer);
+    messagesLeft.textContent =
+        remaining;
 
-    const level = levels[currentLevel];
-    const buttons = document.querySelectorAll(".option");
-
-    buttons.forEach(button => {
-        button.disabled = true;
-    });
-
-    if (index === level.answer) {
-
-        buttons[index].classList.add("correct");
-
-        streak++;
-
-        // Base score
-        let points = 100;
-
-        // Streak bonus
-        points += (streak - 1) * 25;
-
-        // Timed bonus
-        if (level.type === "timed") {
-            points += timeLeft * 5;
-        }
-
-        // Boss bonus
-        if (level.type === "boss") {
-            points += 500;
-        }
-
-        score += points;
-
-        updateHUD();
-
-        setTimeout(() => {
-            nextLevel();
-        }, 1100);
-
-    } else {
-
-        buttons[index].classList.add("wrong");
-
-        if (level.answer !== undefined) {
-            buttons[level.answer].classList.add("correct");
-        }
-
-        lives--;
-        streak = 0;
-
-        updateHUD();
-
-        if (lives <= 0) {
-
-            setTimeout(() => {
-                gameOver();
-            }, 900);
-
-        } else {
-
-            setTimeout(() => {
-
-                showExplanation(level);
-
-                setTimeout(() => {
-                    currentLevel++;
-                    loadLevel();
-                }, 1800);
-
-            }, 700);
-        }
-    }
 }
 
-// ==========================================
-// TIMER
-// ==========================================
 
-function startTimer(seconds) {
+/* =====================================================
+   SEND MESSAGE
+===================================================== */
 
-    timeLeft = seconds;
+async function sendMessage() {
 
-    updateTimer();
-
-    timer = setInterval(() => {
-
-        timeLeft--;
-
-        updateTimer();
-
-        if (timeLeft <= 0) {
-
-            clearInterval(timer);
-
-            if (!answered) {
-                answered = true;
-                timeOut();
-            }
-        }
-
-    }, 1000);
-}
-
-function updateTimer() {
-
-    let timerEl = document.getElementById("timer");
-
-    if (!timerEl) {
-        timerEl = document.createElement("div");
-        timerEl.id = "timer";
-
-        document.body.appendChild(timerEl);
-    }
-
-    const level = levels[currentLevel];
-
-    if (level && level.type === "timed") {
-        timerEl.textContent = `⏱ ${timeLeft}s`;
-    } else {
-        timerEl.textContent = "";
-    }
-}
-
-function timeOut() {
-
-    lives--;
-    streak = 0;
-
-    updateHUD();
-
-    const buttons = document.querySelectorAll(".option");
-
-    buttons.forEach(button => {
-        button.disabled = true;
-    });
-
-    const level = levels[currentLevel];
-
-    if (level.answer !== undefined) {
-        buttons[level.answer].classList.add("correct");
-    }
-
-    if (lives <= 0) {
-
-        setTimeout(() => {
-            gameOver();
-        }, 900);
-
-    } else {
-
-        setTimeout(() => {
-
-            showExplanation(level);
-
-            setTimeout(() => {
-                currentLevel++;
-                loadLevel();
-            }, 1800);
-
-        }, 700);
-    }
-}
-
-// ==========================================
-// EXPLANATION
-// ==========================================
-
-function showExplanation(level) {
-
-    let explanation = document.getElementById("explanation");
-
-    if (!explanation) {
-
-        explanation = document.createElement("div");
-
-        explanation.id = "explanation";
-
-        document.body.appendChild(explanation);
-    }
-
-    explanation.textContent = level.explanation;
-
-    setTimeout(() => {
-        explanation.textContent = "";
-    }, 1700);
-}
-
-// ==========================================
-// NEXT LEVEL
-// ==========================================
-
-function nextLevel() {
-
-    currentLevel++;
-
-    if (currentLevel >= levels.length) {
-        finishGame();
+    if (
+        gameOver ||
+        requestInProgress
+    ) {
         return;
     }
 
-    loadLevel();
+
+    const text =
+        promptInput.value.trim();
+
+
+    if (!text) {
+
+        setGameMessage(
+            "Enter a message first.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (messagesUsed >= 3) {
+
+        setGameMessage(
+            "No messages remaining.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    /* COUNT THE MESSAGE */
+
+    messagesUsed++;
+
+    updateMessageCounter();
+
+
+    /* SHOW USER MESSAGE */
+
+    addUserMessage(text);
+
+
+    /* CLEAR INPUT */
+
+    promptInput.value = "";
+
+    updateCharacterCount();
+
+
+    /* LOCK UI */
+
+    setLoading(true);
+
+
+    try {
+
+        const response =
+            await fetch(
+                GAME_API,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        level:
+                            currentLevel,
+
+                        message:
+                            text
+
+                    })
+
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `Server returned ${response.status}`
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        /* AI RESPONSE */
+
+        addAIMessage(
+            data.reply ||
+            "The AI returned no response."
+        );
+
+
+        /* SUCCESS */
+
+        if (data.success === true) {
+
+            gameOver = true;
+
+            showResult(
+                true,
+                data.title ||
+                    "LEVEL CLEARED",
+                data.message ||
+                    "You defeated the challenge."
+            );
+
+            return;
+
+        }
+
+
+        /* OUT OF MESSAGES */
+
+        if (messagesUsed >= 3) {
+
+            gameOver = true;
+
+            showResult(
+                false,
+                "LEVEL FAILED",
+                "You used all three messages. The AI survived."
+            );
+
+            return;
+
+        }
+
+
+        setGameMessage(
+            `${3 - messagesUsed} message${
+                3 - messagesUsed === 1 ? "" : "s"
+            } remaining.`,
+            ""
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Game API error:",
+            error
+        );
+
+
+        /*
+        If the server fails, refund the
+        player's message.
+        */
+
+        messagesUsed--;
+
+        updateMessageCounter();
+
+
+        setGameMessage(
+            "Unable to connect to the game server.",
+            "error"
+        );
+
+    } finally {
+
+        setLoading(false);
+
+    }
+
 }
 
-// ==========================================
-// HUD
-// ==========================================
 
-function updateHUD() {
+/* =====================================================
+   ADD USER MESSAGE
+===================================================== */
 
-    if (scoreEl) {
-        scoreEl.textContent = `SCORE: ${score}`;
-    }
+function addUserMessage(text) {
 
-    if (livesEl) {
+    const wrapper =
+        document.createElement("div");
 
-        livesEl.textContent =
-            "❤️".repeat(lives) +
-            "🖤".repeat(3 - lives);
-    }
+    wrapper.className =
+        "message user-message";
 
-    if (levelEl) {
-        levelEl.textContent =
-            `LEVEL ${Math.min(currentLevel + 1, levels.length)} / ${levels.length}`;
-    }
-}
 
-// ==========================================
-// GAME OVER
-// ==========================================
+    wrapper.innerHTML = `
 
-function gameOver() {
-
-    clearInterval(timer);
-
-    questionEl.textContent = "GAME OVER";
-
-    optionsEl.innerHTML = `
-        <div class="game-result">
-            <h2>Run Failed</h2>
-            <p>Final Score: <strong>${score}</strong></p>
-            <p>You reached Level ${currentLevel + 1}.</p>
-
-            <button onclick="startGame()">
-                TRY AGAIN
-            </button>
+        <div class="avatar">
+            YOU
         </div>
+
+        <div class="bubble">
+
+            <span class="message-label">
+                PLAYER
+            </span>
+
+            <p></p>
+
+        </div>
+
     `;
+
+
+    const paragraph =
+        wrapper.querySelector("p");
+
+    paragraph.textContent =
+        text;
+
+
+    chat.appendChild(wrapper);
+
+    scrollChatToBottom();
+
 }
 
-// ==========================================
-// FINISH GAME
-// ==========================================
 
-function finishGame() {
+/* =====================================================
+   ADD AI MESSAGE
+===================================================== */
 
-    clearInterval(timer);
+function addAIMessage(text) {
 
-    let rank;
+    const wrapper =
+        document.createElement("div");
 
-    if (score >= 1600) {
-        rank = "GAUNTLET MASTER ☠️";
-    } else if (score >= 1200) {
-        rank = "ELITE RUNNER 🔥";
-    } else if (score >= 800) {
-        rank = "SKILLED RUNNER ⚡";
+    wrapper.className =
+        "message ai-message";
+
+
+    wrapper.innerHTML = `
+
+        <div class="avatar">
+            AI
+        </div>
+
+        <div class="bubble">
+
+            <span class="message-label">
+                GAUNTLET AI
+            </span>
+
+            <p></p>
+
+        </div>
+
+    `;
+
+
+    const paragraph =
+        wrapper.querySelector("p");
+
+    paragraph.textContent =
+        text;
+
+
+    chat.appendChild(wrapper);
+
+    scrollChatToBottom();
+
+}
+
+
+/* =====================================================
+   SCROLL CHAT
+===================================================== */
+
+function scrollChatToBottom() {
+
+    requestAnimationFrame(
+        () => {
+
+            chat.scrollTop =
+                chat.scrollHeight;
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+function setLoading(loading) {
+
+    requestInProgress =
+        loading;
+
+
+    promptInput.disabled =
+        loading ||
+        gameOver;
+
+
+    sendButton.disabled =
+        loading ||
+        gameOver;
+
+
+    if (loading) {
+
+        sendButton.textContent =
+            "THINKING...";
+
     } else {
-        rank = "SURVIVOR 🛡️";
+
+        sendButton.innerHTML =
+            'SEND <span>↵</span>';
+
     }
 
-    questionEl.textContent = "GAUNTLET COMPLETE";
-
-    optionsEl.innerHTML = `
-        <div class="game-result">
-
-            <h2>${rank}</h2>
-
-            <p>Final Score</p>
-
-            <div class="final-score">
-                ${score}
-            </div>
-
-            <p>
-                You defeated all ${levels.length} levels.
-            </p>
-
-            <button onclick="startGame()">
-                PLAY AGAIN
-            </button>
-
-        </div>
-    `;
 }
 
-// ==========================================
-// START
-// ==========================================
 
-startGame();
+/* =====================================================
+   CHARACTER COUNT
+===================================================== */
+
+function updateCharacterCount() {
+
+    const length =
+        promptInput.value.length;
+
+    characterCount.textContent =
+        `${length} / 1000`;
+
+}
+
+
+/* =====================================================
+   GAME STATUS
+===================================================== */
+
+function setGameMessage(
+    message,
+    type
+) {
+
+    gameMessage.textContent =
+        message;
+
+    gameMessage.className =
+        "game-message";
+
+    if (type) {
+
+        gameMessage.classList.add(
+            type
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   RESULT OVERLAY
+===================================================== */
+
+function showResult(
+    success,
+    title,
+    description
+) {
+
+    resultOverlay.classList.remove(
+        "hidden"
+    );
+
+
+    resultCardReset();
+
+
+    if (success) {
+
+        resultIcon.textContent =
+            "✓";
+
+        resultLabel.textContent =
+            "LEVEL COMPLETE";
+
+        resultTitle.textContent =
+            title;
+
+        resultDescription.textContent =
+            description;
+
+        nextButton.textContent =
+            currentLevel === 10
+                ? "FINISH"
+                : "CONTINUE";
+
+    } else {
+
+        resultIcon.textContent =
+            "×";
+
+        resultLabel.textContent =
+            "CHALLENGE FAILED";
+
+        resultTitle.textContent =
+            title;
+
+        resultDescription.textContent =
+            description;
+
+        nextButton.textContent =
+            "TRY AGAIN";
+
+        document
+            .querySelector(".result-card")
+            .classList.add("failed");
+
+    }
+
+}
+
+
+/* =====================================================
+   RESET RESULT CARD
+===================================================== */
+
+function resultCardReset() {
+
+    document
+        .querySelector(".result-card")
+        .classList.remove(
+            "failed"
+        );
+
+}
+
+
+/* =====================================================
+   NEXT / RETRY
+===================================================== */
+
+nextButton.addEventListener(
+    "click",
+    () => {
+
+        resultOverlay.classList.add(
+            "hidden"
+        );
+
+
+        const isFailed =
+            resultTitle.textContent ===
+            "LEVEL FAILED";
+
+
+        if (isFailed) {
+
+            loadLevel(
+                currentLevel
+            );
+
+            return;
+
+        }
+
+
+        /*
+        LEVEL 10 COMPLETE
+        */
+
+        if (currentLevel >= 10) {
+
+            showFinalVictory();
+
+            return;
+
+        }
+
+
+        /*
+        UNLOCK NEXT LEVEL
+        */
+
+        const completed =
+            document.querySelector(
+                `.level[data-level="${currentLevel}"]`
+            );
+
+        if (completed) {
+
+            completed.classList.remove(
+                "active"
+            );
+
+            completed.classList.add(
+                "completed"
+            );
+
+        }
+
+
+        const nextLevel =
+            currentLevel + 1;
+
+
+        const nextElement =
+            document.querySelector(
+                `.level[data-level="${nextLevel}"]`
+            );
+
+        if (nextElement) {
+
+            nextElement.classList.remove(
+                "locked"
+            );
+
+        }
+
+
+        loadLevel(
+            nextLevel
+        );
+
+    }
+);
+
+
+/* =====================================================
+   FINAL VICTORY
+===================================================== */
+
+function showFinalVictory() {
+
+    resultOverlay.classList.remove(
+        "hidden"
+    );
+
+
+    resultCardReset();
+
+
+    resultIcon.textContent =
+        "★";
+
+    resultLabel.textContent =
+        "GAUNTLET COMPLETE";
+
+    resultTitle.textContent =
+        "YOU BEAT THE GAUNTLET";
+
+    resultDescription.textContent =
+        "All 10 AI challenges have been defeated.";
+
+    nextButton.textContent =
+        "PLAY AGAIN";
+
+}
+
+
+/* =====================================================
+   PLAY AGAIN AFTER FINAL
+===================================================== */
+
+nextButton.addEventListener(
+    "click",
+    () => {
+
+        if (
+            resultTitle.textContent ===
+            "YOU BEAT THE GAUNTLET"
+        ) {
+
+            resultOverlay.classList.add(
+                "hidden"
+            );
+
+            loadLevel(1);
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   INPUT EVENTS
+===================================================== */
+
+promptInput.addEventListener(
+    "input",
+    updateCharacterCount
+);
+
+
+promptInput.addEventListener(
+    "keydown",
+    event => {
+
+        /*
+        Enter sends the message.
+
+        Shift + Enter creates a new line.
+        */
+
+        if (
+            event.key === "Enter" &&
+            !event.shiftKey
+        ) {
+
+            event.preventDefault();
+
+            sendMessage();
+
+        }
+
+    }
+);
+
+
+sendButton.addEventListener(
+    "click",
+    sendMessage
+);
+
+
+/* =====================================================
+   LEVEL CLICK PROTECTION
+===================================================== */
+
+document
+    .querySelectorAll(".level")
+    .forEach(levelElement => {
+
+        levelElement.addEventListener(
+            "click",
+            () => {
+
+                const selectedLevel =
+                    Number(
+                        levelElement.dataset.level
+                    );
+
+
+                /*
+                Players cannot skip levels.
+                */
+
+                if (
+                    selectedLevel !==
+                    currentLevel
+                ) {
+
+                    setGameMessage(
+                        "Complete the current level first.",
+                        ""
+                    );
+
+                }
+
+            }
+        );
+
+    });
